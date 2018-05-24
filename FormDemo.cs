@@ -23,7 +23,7 @@ namespace ReaderSampleProject
 
         private SportidentCard kiolvasott;
 
-        private int[][] palyak = new int[4][];
+        private uint[][] palyak = new uint[4][];
         private int palya = 0;
 
 
@@ -54,10 +54,10 @@ namespace ReaderSampleProject
         {
             InitializeComponent();
 
-            palyak[0] = new int[] { 37, 34, 35, 42, 40, 45 };
-            palyak[1] = new int[] { 46, 42, 41, 33, 34, 44 };
-            palyak[2] = new int[] { 39, 34, 33, 32, 35, 38, 46, 40, 42, 47, 43 };
-            palyak[3] = new int[] { 31, 34, 38, 46, 47, 41, 33, 40, 36, 44 };
+            palyak[0] = new uint[] { 37, 34, 35, 42, 40, 45 };
+            palyak[1] = new uint[] { 46, 42, 41, 33, 34, 44 };
+            palyak[2] = new uint[] { 39, 34, 33, 32, 35, 38, 46, 40, 42, 47, 43 };
+            palyak[3] = new uint[] { 31, 34, 38, 46, 47, 41, 33, 40, 36, 44 };
 
             _reader = new Reader
             {
@@ -90,16 +90,34 @@ namespace ReaderSampleProject
             //you will find the card data in the e.Card array that may contain several cards
             //wod here please
             int[] distance = { 0, 0, 0, 0 };
-            
+            SportidentCard c = e.Cards[0];
+            kiolvasott = c;
 
             //pályafelismerés
+            for (int p = 0; p < 4; ++p)
+            {
+                int p_y = 0;
+                for (int x = 0;x< c.ControlPunchList.Count; ++x)
+                    if(p_y < palyak[p].Length && palyak[p][p_y] == c.ControlPunchList[x].CodeNumber)
+                        ++p_y;
+                    else
+                        ++distance[p];
+
+                if (p_y != palyak[p].Length)
+                    distance[p] += 100;
+            }
+
+            int min = 0;
+            for (int i = 1; i < 4; ++i)
+                if (distance[i] < distance[min])
+                    min = i;
+
+            palya = min;
 
             //nyomtatás
-            kiolvasott = e.Cards[0];
             printFont = new Font("Times New Roman", 10);
             PrintDocument pd = new PrintDocument();
             pd.PrinterSettings.PrinterName = "EPSON TM-T20 Receipt";
-            // pd.PrinterSettings.
             pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
             pd.Print();
 
@@ -592,7 +610,7 @@ namespace ReaderSampleProject
         {
             try
             {
-                printFont = new Font("Open Sans Semibold", 10);
+                printFont = new Font("Open Sans Semibold", 12);
                 PrintDocument pd = new PrintDocument();
                 pd.PrinterSettings.PrinterName = "EPSON TM-T20 Receipt";
                // pd.PrinterSettings.
