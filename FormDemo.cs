@@ -7,6 +7,8 @@ using SPORTident.Common;
 using SPORTident.Communication;
 using SPORTident.Communication.UsbDevice;
 using SPORTident.Db;
+using System.Drawing;
+using System.Drawing.Printing;
 
 namespace ReaderSampleProject
 {
@@ -16,6 +18,14 @@ namespace ReaderSampleProject
         
         private bool _connected;
         private Dictionary<int, DeviceInfo> _deviceInfoList;
+
+        private Font printFont;
+
+        private SportidentCard kiolvasott;
+
+        private int[][] palyak = new int[4][];
+        private int palya = 0;
+
 
         private void _refreshDeviceList()
         {
@@ -43,6 +53,11 @@ namespace ReaderSampleProject
         public FormDemo()
         {
             InitializeComponent();
+
+            palyak[0] = new int[] { 37, 34, 35, 42, 40, 45 };
+            palyak[1] = new int[] { 46, 42, 41, 33, 34, 44 };
+            palyak[2] = new int[] { 39, 34, 33, 32, 35, 38, 46, 40, 42, 47, 43 };
+            palyak[3] = new int[] { 31, 34, 38, 46, 47, 41, 33, 40, 36, 44 };
 
             _reader = new Reader
             {
@@ -73,6 +88,21 @@ namespace ReaderSampleProject
         {
             //handle this event to further process a read out card
             //you will find the card data in the e.Card array that may contain several cards
+            //wod here please
+            int[] distance = { 0, 0, 0, 0 };
+            
+
+            //pályafelismerés
+
+            //nyomtatás
+            kiolvasott = e.Cards[0];
+            printFont = new Font("Times New Roman", 10);
+            PrintDocument pd = new PrintDocument();
+            pd.PrinterSettings.PrinterName = "EPSON TM-T20 Receipt";
+            // pd.PrinterSettings.
+            pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
+            pd.Print();
+
         }
         /// <summary>Handles the event that is thrown when the reader class read an online stamp completely</summary>
         private void _reader_OnlineStampRead(object sender, SportidentDataEventArgs e)
@@ -556,6 +586,42 @@ namespace ReaderSampleProject
             if (myOf.ShowDialog() != DialogResult.OK) return;
 
             txtOutputTextFile.Text = myOf.FileName;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                printFont = new Font("Open Sans Semibold", 10);
+                PrintDocument pd = new PrintDocument();
+                pd.PrinterSettings.PrinterName = "EPSON TM-T20 Receipt";
+               // pd.PrinterSettings.
+                pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
+                //pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
+                pd.Print();
+            }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+}
+        private void pd_PrintPage(object sender, PrintPageEventArgs ev)
+        {
+            //yPos =  (count * printFont.GetHeight(ev.Graphics));
+
+            //wod logo
+            ev.Graphics.DrawImage(Image.FromFile("D:\\work\\wod\\v1\\wod-logo-black.png"),0,0,272,101);
+
+            //szövegek
+            ev.Graphics.DrawString("teszt", printFont, Brushes.Black, 0, 101, new StringFormat());
+
+            //részidőzgetés
+
+
+            //végére szövegek
+
+            ev.HasMorePages = false;
+
         }
     }
 }

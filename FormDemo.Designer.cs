@@ -54,6 +54,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtInfo = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.grpInputDevice.SuspendLayout();
             this.grpOutputDevice.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.udOutputNetworkPort)).BeginInit();
@@ -354,6 +355,7 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.White;
+            this.panel2.Controls.Add(this.button2);
             this.panel2.Controls.Add(this.btnOpen);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 426);
@@ -384,6 +386,16 @@
             this.txtInfo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtInfo.Size = new System.Drawing.Size(562, 98);
             this.txtInfo.TabIndex = 1;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(291, 9);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 100;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // FormDemo
             // 
@@ -440,6 +452,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnOutputTextFile;
         private System.Windows.Forms.TextBox txtInfo;
+        private System.Windows.Forms.Button button2;
     }
 }
 

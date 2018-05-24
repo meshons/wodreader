@@ -34,11 +34,23 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\..\Program Files (x86)\SPORTident\ReaderUI\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="SPORTident.Common">
-      <HintPath>..\..\SPORTident.Common.dll</HintPath>
+      <HintPath>..\..\..\Program Files (x86)\SPORTident\ReaderUI\SPORTident.Common.dll</HintPath>
     </Reference>
     <Reference Include="SPORTident.Communication">
-      <HintPath>..\..\SPORTident.Communication.dll</HintPath>
+      <HintPath>..\..\..\Program Files (x86)\SPORTident\ReaderUI\SPORTident.Communication.dll</HintPath>
+    </Reference>
+    <Reference Include="SPORTident.Reader">
+      <HintPath>..\..\..\Program Files (x86)\SPORTident\ReaderUI\SPORTident.Reader.dll</HintPath>
+    </Reference>
+    <Reference Include="SPORTident.ReaderUI.PluginInterface">
+      <HintPath>..\..\..\Program Files (x86)\SPORTident\ReaderUI\SPORTident.ReaderUI.PluginInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="SPORTident.ReaderUI.PluginServices">
+      <HintPath>..\..\..\Program Files (x86)\SPORTident\ReaderUI\SPORTident.ReaderUI.PluginServices.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
