@@ -25,6 +25,7 @@ namespace ReaderSampleProject
 
         private uint[][] palyak = new uint[4][];
         private int palya = 0;
+        private bool siker = false;
 
 
         private void _refreshDeviceList()
@@ -113,9 +114,11 @@ namespace ReaderSampleProject
                     min = i;
 
             palya = min;
+            siker = distance[min] < 100;
 
             //nyomtatás
-            printFont = new Font("Times New Roman", 10);
+            printFont = new Font("Open Sans Semibold", 12);
+            //printFont = new Font("Times New Roman", 10);
             PrintDocument pd = new PrintDocument();
             pd.PrinterSettings.PrinterName = "EPSON TM-T20 Receipt";
             pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
@@ -626,14 +629,59 @@ namespace ReaderSampleProject
         private void pd_PrintPage(object sender, PrintPageEventArgs ev)
         {
             //yPos =  (count * printFont.GetHeight(ev.Graphics));
+            StringFormat sf1 = new StringFormat();
+            StringFormat sf2 = new StringFormat();
+            sf2.Alignment = StringAlignment.Far;
+            StringFormat sf3 = new StringFormat();
+            sf3.Alignment = StringAlignment.Center;
 
             //wod logo
             ev.Graphics.DrawImage(Image.FromFile("D:\\work\\wod\\v1\\wod-logo-black.png"),0,0,272,101);
 
             //szövegek
-            ev.Graphics.DrawString("teszt", printFont, Brushes.Black, 0, 101, new StringFormat());
+            float szovegekhossza = 101;
+            ev.Graphics.DrawString("Köszönjük a részvételt!", printFont, Brushes.Black, new RectangleF(new PointF(0,szovegekhossza),new SizeF(272,printFont.GetHeight(ev.Graphics))), sf3);
+            szovegekhossza += printFont.GetHeight(ev.Graphics);
+            ev.Graphics.DrawString("Edzések a besztercei iskolában", printFont, Brushes.Black, new RectangleF(new PointF(0, szovegekhossza), new SizeF(272, printFont.GetHeight(ev.Graphics))), sf3);
+            szovegekhossza += printFont.GetHeight(ev.Graphics);
+            ev.Graphics.DrawString("érdeklődés: Sramkó Tibor edzőnél", printFont, Brushes.Black, new RectangleF(new PointF(0, szovegekhossza), new SizeF(272, printFont.GetHeight(ev.Graphics))), sf3);
+            szovegekhossza += printFont.GetHeight(ev.Graphics);
+            ev.Graphics.DrawString("Pálya: ", printFont, Brushes.Black, new RectangleF(new PointF(0, szovegekhossza), new SizeF(133, printFont.GetHeight(ev.Graphics))), sf2);
+            ev.Graphics.DrawString(((char)('A'+palya)).ToString(), printFont, Brushes.Black, new RectangleF(new PointF(138, szovegekhossza), new SizeF(90, printFont.GetHeight(ev.Graphics))), sf1);
+            szovegekhossza += printFont.GetHeight(ev.Graphics);
+            ev.Graphics.DrawString("Eredmény: ", printFont, Brushes.Black, new RectangleF(new PointF(0, szovegekhossza), new SizeF(133, printFont.GetHeight(ev.Graphics))), sf2);
+            ev.Graphics.DrawString((kiolvasott.FinishPunch.PunchDateTime - kiolvasott.StartPunch.PunchDateTime).ToString(), printFont, Brushes.Black, new RectangleF(new PointF(135, szovegekhossza), new SizeF(90, printFont.GetHeight(ev.Graphics))), sf1);
+            if (!siker)
+            {
+                szovegekhossza += printFont.GetHeight(ev.Graphics);
+                ev.Graphics.DrawString("Hibás eredmény!", printFont, Brushes.Black, new RectangleF(new PointF(0, szovegekhossza), new SizeF(272, printFont.GetHeight(ev.Graphics))), sf3);
+            }
 
             //részidőzgetés
+            float reszidokhossza = szovegekhossza+2*printFont.GetHeight(ev.Graphics);
+
+            int j = 0;
+            int k = 0;
+            ev.Graphics.DrawString("", printFont, Brushes.Black, new RectangleF(new PointF(0, szovegekhossza), new SizeF(272, printFont.GetHeight(ev.Graphics))), sf3);
+            for (int i = 0; i < kiolvasott.ControlPunchList.Count; ++i)
+            {
+                if (palyak[palya][j] == kiolvasott.ControlPunchList[i].CodeNumber)
+                {
+                    ev.Graphics.DrawString(("("+(j+1)+"):").ToString(), printFont, Brushes.Black, new RectangleF(new PointF(0, reszidokhossza + j * printFont.GetHeight(ev.Graphics)), new SizeF(45, printFont.GetHeight(ev.Graphics))), sf2);
+                    ev.Graphics.DrawString(kiolvasott.ControlPunchList[i].CodeNumber.ToString(), printFont, Brushes.Black, new RectangleF(new PointF(45, reszidokhossza + j * printFont.GetHeight(ev.Graphics)), new SizeF(45, printFont.GetHeight(ev.Graphics))), sf2);
+                    ev.Graphics.DrawString((kiolvasott.ControlPunchList[i].PunchDateTime - kiolvasott.StartPunch.PunchDateTime).ToString(), printFont, Brushes.Black, new RectangleF(new PointF(90, reszidokhossza + j * printFont.GetHeight(ev.Graphics)), new SizeF(90, printFont.GetHeight(ev.Graphics))), sf2);
+                    if (j != 0)
+                        ev.Graphics.DrawString((kiolvasott.ControlPunchList[i].PunchDateTime - kiolvasott.ControlPunchList[k].PunchDateTime).ToString(), printFont, Brushes.Black, new RectangleF(new PointF(180, reszidokhossza + j * printFont.GetHeight(ev.Graphics)), new SizeF(90, printFont.GetHeight(ev.Graphics))), sf2);
+                    k = i;
+                    j++;
+                }
+                else
+                {
+                    ev.Graphics.DrawString(("(+):").ToString(), printFont, Brushes.Black, new RectangleF(new PointF(0, reszidokhossza + (palyak[palya].Length + i - j + 2) * printFont.GetHeight(ev.Graphics)), new SizeF(45, printFont.GetHeight(ev.Graphics))), sf2);
+                    ev.Graphics.DrawString(kiolvasott.ControlPunchList[i].CodeNumber.ToString(), printFont, Brushes.Black, new RectangleF(new PointF(45, reszidokhossza + (palyak[palya].Length + i - j + 2) * printFont.GetHeight(ev.Graphics)), new SizeF(45, printFont.GetHeight(ev.Graphics))), sf2);
+                    ev.Graphics.DrawString((kiolvasott.ControlPunchList[i].PunchDateTime - kiolvasott.StartPunch.PunchDateTime).ToString(), printFont, Brushes.Black, new RectangleF(new PointF(90, reszidokhossza + (palyak[palya].Length + i - j + 2) * printFont.GetHeight(ev.Graphics)), new SizeF(90, printFont.GetHeight(ev.Graphics))), sf2);
+                }
+            }
 
 
             //végére szövegek
